@@ -2,7 +2,11 @@ const storagePrefix = 'good_react_'
 
 const storage = {
   getToken: () => {
-    return JSON.parse(window.localStorage.getItem(`${storagePrefix}token`) as string)
+    try {
+      return JSON.parse(window.localStorage.getItem(`${storagePrefix}token`) as string)
+    } catch {
+      storage.clearToken()
+    }
   },
   setToken: (token: string) => {
     window.localStorage.setItem(`${storagePrefix}token`, JSON.stringify(token))

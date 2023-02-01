@@ -11,6 +11,7 @@ export default defineConfig({
     },
   },
   define: {
+    global: {},
     'process.env': process.env,
   },
   optimizeDeps: {

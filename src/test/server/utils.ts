@@ -1,8 +1,9 @@
-import { verify, sign } from 'jsonwebtoken-esm'
+import * as jose from 'jose'
 import { omit } from 'lodash'
 import { RestRequest, createResponseComposition, context } from 'msw'
 
 import { JWT_SECRET } from '@/config'
+import storage from '@/utils/storage'
 
 import { db } from './db'
 
@@ -31,7 +32,7 @@ export function requireAuth(request: RestRequest) {
       throw new Error('没有权限')
     }
 
-    const decodeToken = verify(encodeToken, JWT_SECRET) as { id: string }
+    const decodeToken = jose.decodeJwt(encodeToken) as { id: string }
 
     const user = db.user.findFirst({
       where: {
@@ -47,11 +48,12 @@ export function requireAuth(request: RestRequest) {
 
     return sanitizeUser(user)
   } catch (err: any) {
+    storage.clearToken()
     throw new Error(err)
   }
 }
 
-export function authenticate({ email, password }: { email: string; password: string }) {
+export async function authenticate({ email, password }: { email: string; password: string }) {
   const user = db.user.findFirst({
     where: {
       email: {
@@ -62,7 +64,16 @@ export function authenticate({ email, password }: { email: string; password: str
 
   if (user?.password === hash(password)) {
     const sanitizedUser = sanitizeUser(user)
-    const encodedToken = sign(sanitizedUser, JWT_SECRET)
+
+    const secret = new TextEncoder().encode(JWT_SECRET)
+    const alg = 'HS256'
+    const encodedToken = await new jose.SignJWT(sanitizedUser)
+      .setProtectedHeader({ alg })
+      .setIssuedAt()
+      .setIssuer('urn:example:issuer')
+      .setAudience('urn:example:audience')
+      .setExpirationTime('2h')
+      .sign(secret)
 
     return { user: sanitizedUser, jwt: encodedToken }
   }

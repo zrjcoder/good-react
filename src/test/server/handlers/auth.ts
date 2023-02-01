@@ -20,10 +20,10 @@ type LoginBody = {
 }
 
 export const authHandlers = [
-  rest.post<LoginBody>(`${API_URL}/auth/login`, (req, res, ctx) => {
+  rest.post<LoginBody>(`${API_URL}/auth/login`, async (req, res, ctx) => {
     try {
       const credentials = req.body
-      const result = authenticate(credentials)
+      const result = await authenticate(credentials)
 
       return delayedResponse(ctx.json(result))
     } catch (error: any) {
@@ -46,7 +46,7 @@ export const authHandlers = [
     }
   }),
 
-  rest.post<RegisterBody>(`${API_URL}/auth/register`, (req, res, ctx) => {
+  rest.post<RegisterBody>(`${API_URL}/auth/register`, async (req, res, ctx) => {
     try {
       const userObject = req.body
 
@@ -101,7 +101,7 @@ export const authHandlers = [
 
       persistDb('user')
 
-      const result = authenticate({ email: userObject.email, password: userObject.password })
+      const result = await authenticate({ email: userObject.email, password: userObject.password })
 
       return delayedResponse(ctx.json(result))
     } catch (error: any) {
