@@ -1,12 +1,15 @@
 import { Suspense } from 'react'
-import { Outlet, Routes, Route } from 'react-router-dom'
+import { Outlet } from 'react-router-dom'
 
 import { Spinner } from '@/components/Elements'
 import { MainLayout } from '@/components/Layout'
-// import { MyTest } from '@/features/mytest'
 import { lazyImport } from '@/utils/lazyImport'
 
 const { MyTest } = lazyImport(() => import('@/features/mytest'), 'MyTest')
+const { DiscussionsRoutes } = lazyImport(
+  () => import('@/features/discussions'),
+  'DiscussionsRoutes'
+)
 
 const App = () => {
   return (
@@ -24,21 +27,13 @@ const App = () => {
   )
 }
 
-const AppRoutes = () => {
-  return (
-    <Routes>
-      <Route path="test" element={<MyTest />} />
-    </Routes>
-  )
-}
-
 export const protectedRoutes = [
   {
-    path: 'app',
+    path: '/app',
     element: <App />,
-  },
-  {
-    path: 'app/*',
-    element: <AppRoutes />,
+    children: [
+      { path: 'discussions/*', element: <DiscussionsRoutes /> },
+      { path: 'test', element: <MyTest /> },
+    ],
   },
 ]
