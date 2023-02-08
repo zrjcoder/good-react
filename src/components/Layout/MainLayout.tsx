@@ -1,19 +1,12 @@
 import { Dialog, Menu, Transition } from '@headlessui/react'
-import {
-  UserIcon,
-  FolderIcon,
-  HomeIcon,
-  MenuAlt2Icon,
-  UsersIcon,
-  XIcon,
-} from '@heroicons/react/outline'
+import { UserIcon, FolderIcon, HomeIcon, MenuAlt2Icon, XIcon } from '@heroicons/react/outline'
 import clsx from 'clsx'
 import React from 'react'
 import { NavLink, Link } from 'react-router-dom'
 
 import logo from '@/assets/logo.svg'
 import { useAuth } from '@/lib/auth'
-// import { useAuthorization, ROLES } from '@/lib/authorization';
+import { useAuthorization, ROLES } from '@/lib/authorization'
 
 type SideNavigationItem = {
   name: string
@@ -22,10 +15,15 @@ type SideNavigationItem = {
 }
 
 const SideNavigation = () => {
-  // const {  } = useAuthorzation()
+  const { checkAccess } = useAuthorization()
   const navigation = [
     { name: '首页', to: '.', icon: HomeIcon },
-    { name: '讨论', to: './discussions', icon: FolderIcon },
+    { name: '帖子', to: './discussions', icon: FolderIcon },
+    checkAccess({ allowedRoles: [ROLES.ADMIN] }) && {
+      name: '用户',
+      to: './users',
+      icon: UserIcon,
+    },
   ].filter(Boolean) as SideNavigationItem[]
 
   return (

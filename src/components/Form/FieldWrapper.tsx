@@ -10,7 +10,7 @@ type FieldWrapperProps = {
   description?: string
 }
 
-export type FieldWrapperPropsThroughProps = Omit<FieldWrapperProps, 'className' | 'children'>
+export type FieldWrapperPassThroughProps = Omit<FieldWrapperProps, 'className' | 'children'>
 
 export const FieldWrapper = (props: FieldWrapperProps) => {
   const { label, className, error, children } = props

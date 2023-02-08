@@ -1,11 +1,12 @@
 import { Suspense } from 'react'
-import { Outlet } from 'react-router-dom'
+import { Navigate, Outlet } from 'react-router-dom'
 
 import { Spinner } from '@/components/Elements'
 import { MainLayout } from '@/components/Layout'
 import { lazyImport } from '@/utils/lazyImport'
 
 const { MyTest } = lazyImport(() => import('@/features/mytest'), 'MyTest')
+const { Dashboard } = lazyImport(() => import('@/features/misc'), 'Dashboard')
 const { DiscussionsRoutes } = lazyImport(
   () => import('@/features/discussions'),
   'DiscussionsRoutes'
@@ -33,7 +34,9 @@ export const protectedRoutes = [
     element: <App />,
     children: [
       { path: 'discussions/*', element: <DiscussionsRoutes /> },
+      { path: '*', element: <Navigate to="." /> },
       { path: 'test', element: <MyTest /> },
+      { path: '', element: <Dashboard /> },
     ],
   },
 ]
