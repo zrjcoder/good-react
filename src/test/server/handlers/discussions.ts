@@ -49,5 +49,26 @@ export const discussionsHandlers = [
     }
   }),
 
+  rest.post<{ discussionId: string }>(`${API_URL}/delete/discussions`, (req, res, ctx) => {
+    try {
+      const user = requireAuth(req)
+      const { discussionId } = req.body
+      requireAdmin(user)
+
+      const result = db.discussion.delete({
+        where: {
+          id: {
+            equals: discussionId,
+          },
+        },
+      })
+
+      persistDb('discussion')
+      return delayedResponse(ctx.json(result))
+    } catch (error: any) {
+      return delayedResponse(ctx.status(400), ctx.json({ message: error?.message || '网络错误' }))
+    }
+  }),
+
   // rest.get(`${API_URL}/discussions/:discussionId`, (req, res, ctx) => {}),
 ]

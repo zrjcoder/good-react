@@ -1,5 +1,4 @@
 import { Table, Spinner, Link } from '@/components/Elements'
-import { queryClient } from '@/lib/react-query'
 import { formatDate } from '@/utils/format'
 
 import { useDiscussions } from '../api/getDiscussions'
@@ -9,7 +8,6 @@ import { DeleteDiscussion } from './DeleteDiscussion'
 
 export const DiscussionsList = () => {
   const discussionsQuery = useDiscussions()
-  const previousDiscussions = queryClient.getQueryData<Discussion[]>('discussions')
 
   if (discussionsQuery.isLoading) {
     return (
