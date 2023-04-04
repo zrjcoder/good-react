@@ -5,7 +5,7 @@ import App from './App'
 import './index.css'
 import { prepare } from './test/server'
 
-prepare().then(() => {
+prepare().then(async () => {
   ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
     <React.StrictMode>
       <App />
